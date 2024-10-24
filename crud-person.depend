@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1729776703 source:c:\users\sineo\documents\enaa\person-crud\crud-person\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+
