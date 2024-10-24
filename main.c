@@ -4,17 +4,19 @@
 
 // person structure
 typedef struct {
+    int id;
     char name[50];
     int age;
     char adresse[50];
 } Person;
 
 
+
 // create a function that reads multiple people
 void getPeole (Person people[]);
 
 // create a function that reads a single person
-int createPerson(char name[50], int age, char adress[50]);
+int createPerson();
 
 // create an array where we can store intstances of person
 Person people[30];
@@ -44,12 +46,12 @@ int main()
 
     _Bool crudProcess = true;
     do {
-        if (crudType != 'C' || crudType != 'R' || crudType != 'B' || crudType != 'U' || crudType != 'D') {
-            printf("invalide charachter, you should type only (C,R,B,U,D) \n");
-            scanf("%c", &crudType);
+        if (crudType == 'C' || crudType == 'R' || crudType == 'B' || crudType == 'U' || crudType == 'D') {
+            crudProcess = false;
         }
         else {
-            crudProcess = false;
+            printf("invalide charachter, you should type only (C,R,B,U,D) \n");
+            scanf("%s²", &crudType);
         }
 
     } while(crudProcess);
@@ -59,8 +61,8 @@ int main()
     switch (crudType) {
         case 'C':
             // call the create function
-            printf("creating....");
-            createPerson("sine oussmaa", 32, "fkjnfgjf vksdjfv");
+            printf("creating....\n");
+            createPerson();
             break;
         case 'R':
             // call the function that reads single person
@@ -80,20 +82,30 @@ int main()
     return 0;
 }
 
-int createPerson(char name[50], int age, char adress[50]) {
-    // insert a new person
+int createPerson() {
+    char fullName[50], adress[50];
+    int age;
+
+    printf("enter full name ");
+    scanf("%s", &fullName);
+
+    printf("enter age ");
+    scanf("%d", &age);
+
+    printf("enter adress ");
+    scanf("%s", &adress);
+
+    // create a new person
     Person person;
 
-    strcpy(person.name, name);
+    strcpy(person.name, fullName);
     person.age = age;
     strcpy(person.adresse, adress);
 
-    insertIntoPoeple(person);
-    printf("person created");
+    // insert into people
+
 }
 
-int insertIntoPoeple ( Person person ) {
-    people[0] = person;
-}
+
 
 
