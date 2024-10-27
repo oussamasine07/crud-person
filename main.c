@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+// declare needed variables
 // person structure
 typedef struct {
     int id;
@@ -11,19 +12,19 @@ typedef struct {
 } Person;
 
 
-// declare variable count
-int count;
-char appState = 'H';
 
 // create an array where we can store intstances of person
 Person people[30];
+char appState = 'H';
+int currentPersonIdx = 0;
+int countedPeople = 0;
+int searchId;
 
-// create an counter to keep track of people number inside the array
+
+
+// declare needed functions
+// count how many people in the array
 int countPeople ();
-
-
-int homeApp ();
-
 // create a function that reads All the all people
 int getPeople();
 
@@ -34,138 +35,157 @@ int getPerson( int id );
 int createPerson();
 
 // create a function that updates a person
-int updatePerson();
+int updatePerson( int id );
 
 // create a function that deletes a person
-int deletePerson();
+int deletePerson( int id );
 
 int main()
 {
-    count = countPeople();
-
-    printf("CRUD POEPLE\n");
-    // ask the user what operation he want to effect
-    /*
-    printf("Please choose what operation you want to do \n");
-    printf("C => type C to create a new person\n");
-    printf("R => type R to get single person\n");
-    printf("B => type B to get bulk of people\n");
-    printf("U => type U to update a person\n");
-    printf("D => type D to delete a person\n");
-    */
+    printf("Testing Crud\n");
 
     _Bool running = true;
+    _Bool userCheck = true;
 
-    while ( running ) {
+    do {
 
-        if ( appState == 'H' ) {
-            homeApp();
-            printf("Type a charachter ");
-            scanf("%s", &appState);
-        }
-
-        // validate characters
-
-        _Bool crudProcess = true;
-        do {
-            if (appState == 'C' || appState == 'R' || appState == 'B' || appState == 'U' || appState == 'D') {
-                crudProcess = false;
-            }
-            else {
-                printf("invalide charachter, you should type only (C,R,B,U,D) \n");
-                scanf("%s", &appState);
-            }
-
-        } while(crudProcess);
-
-        // start a switch statement
         switch (appState) {
-            case 'C':
-                // call the create function
-                createPerson();
-                break;
-            case 'R':
-                // call the function that reads single person
-                printf("**********************************************************\n");
-                printf("********************* SINGLE PERSON **********************\n");
-                printf("**********************************************************\n");
+            case 'H':
+                printf("please enter one of these letters (C,B,R,U,D)\n");
+                scanf("%s", &appState);
 
-                int id;
-                printf("Please enter an id of a person ");
-                scanf("%d", &id);
+                do {
+                    if (appState == 'C' || appState == 'R' || appState == 'B' || appState == 'U' || appState == 'D' || appState == 'Q') {
+                        userCheck = false;
+                    }
+                    else {
+                        printf("invalide charachter, you should type only (C,R,B,U,D) \n");
+                        scanf("%s", &appState);
+                    }
+                } while (userCheck);
 
-                getPerson(id);
                 break;
             case 'B':
-                // call the function that reads bulk poeple
                 getPeople();
                 break;
+            case 'R':
+                countedPeople = countPeople();
+                if ( countedPeople == 0 ) {
+                    printf("There is no one in this list, you have to add some one \n");
+                    appState = 'C';
+                }
+                else {
+                    printf("Please enter an ID of a person ");
+                    scanf("%d", &searchId);
+                    getPerson( searchId );
+                }
+
+                break;
+            case 'C':
+                createPerson();
+                break;
             case 'U':
-                // call the function that updates a user
+                countedPeople = countPeople();
+                if ( countedPeople == 0 ) {
+                    printf("There is no one in this list, you have to add some one \n");
+                    appState = 'C';
+                }
+                else {
+                    printf("Please enter an ID of a person ");
+                    scanf("%d", &searchId);
+                    updatePerson( searchId );
+                }
+
                 break;
             case 'D':
-                // call the function that deletes a single person
+                countedPeople = countPeople();
+                if ( countedPeople == 0 ) {
+                    printf("There is no one in this list, you have to add some one \n");
+                    appState = 'C';
+                }
+                else {
+                    printf("Please enter an ID of a person or banch of ids of people \n");
+                    printf("you can inter up to 50 people at once \n");
+
+                    scanf("%d", &searchId);
+                    deletePerson( searchId );
+                }
                 break;
+            case 'Q':
+                running = false;
         }
 
-    }
+    } while( running );
+
+    printf("app is done!");
 
     return 0;
 }
 
-int homeApp () {
-    // ask the user what operation he want to effect
-    printf("Please choose what operation you want to do \n");
-    printf("C => type C to create a new person\n");
-    printf("R => type R to get single person\n");
-    printf("B => type B to get bulk of people\n");
-    printf("U => type U to update a person\n");
-    printf("D => type D to delete a person\n");
-}
 
 int getPeople () {
-    printf("*******************************************************\n");
-    printf("********************* ALL POEPLE **********************\n");
-    printf("*******************************************************\n");
-    if ( count > 0 ) {
-        for ( int i = 0; i <= count; i++ ) {
-            printf("%s | %d | %s \n", people[i].name, people[i].age, people[i].adress);
-        }
+    countedPeople = countPeople();
+
+    if ( countedPeople == 0) {
+        printf("There is no one in this list, you have to add some one \n");
+        appState = 'C';
     }
     else {
-        printf("there no person yet ! ");
+        printf("*******************************************************\n");
+        printf("********************* ALL POEPLE **********************\n");
+        printf("*******************************************************\n");
+
+        // print all people names
+        for ( int i = 0; i < 30; i++ ) {
+            if ( strlen( people[i].name ) > 0 ) {
+                printf("=====================================================\n");
+                printf("ID : %d\n", people[i].id);
+                printf("NAME : %s\n", people[i].name);
+                printf("AGE : %d\n", people[i].age);
+                printf("ADRESS : %s\n", people[i].adress);
+                printf("\n");
+            }
+            else {
+                break;
+            }
+        }
+
+        appState = 'H';
     }
 
 }
 
 int getPerson( int id ) {
 
+    countedPeople = countPeople();
+    int found = 0;
 
-    Person people[30] = {
-        {1, "Alice", 30},
-        {2, "Bob", 25},
-        {3, "Charlie", 35}
-    };
+    if ( countedPeople == 0) {
+        printf("There is no one in this list, you have to add some one \n");
+        appState = 'C';
+    }
+    else {
+        printf("********************************************************\n");
+        printf("********************* PERSON INFO **********************\n");
+        printf("********************************************************\n");
 
-    printf("******** person info *********");
-    for ( int i = 0; i <= count; i++ ){
+        // print all people names
+        for ( int i = 0; i < 30; i++ ) {
 
-        if (strlen(people[i].name) > 0) {
             if ( people[i].id == id ) {
-                printf(" %s | %d | %s ", people[i].name, people[i].age, people[i].adress);
-                break;
-            }
-            else {
-                printf("person not found");
+                printf("ID : %d\n", people[i].id);
+                printf("NAME : %s\n", people[i].name);
+                printf("AGE : %d\n", people[i].age);
+                printf("ADRESS : %s\n", people[i].adress);
+                found = 1;
                 break;
             }
         }
-        else {
-            printf("the list of poeple still empty\n");
-            break;
+        if ( !found ) {
+            printf("the person you are looking for is not found\n");
         }
-
-
+        appState = 'H';
+        printf("\n");
     }
 }
 
@@ -175,127 +195,149 @@ int createPerson() {
     printf("********************* CREATE PERSON **********************\n");
     printf("**********************************************************\n");
 
-    char fullName[50], adress[50];
-    int age;
+    char fullName[50], adress[50], checkAdding;
+    int insertCount, age;
+    _Bool adding = true;
 
-    printf("enter full name ");
-    scanf("%s", &fullName);
+    printf("How many people do you want to enter? ");
+    scanf("%d", &insertCount);
 
-    printf("enter age ");
-    scanf("%d", &age);
+    while ( adding ) {
+        for ( int i = 0; i < insertCount; i++ ) {
+            printf("enter full name ");
+            scanf("%s", &fullName);
 
-    printf("enter adress ");
-    scanf("%s", &adress);
+            printf("enter age ");
+            scanf("%d", &age);
 
-    // create a new person
-    Person person;
+            printf("enter adress ");
+            scanf("%s", &adress);
 
-    strcpy(person.name, fullName);
-    person.age = age;
-    strcpy(person.adress, adress);
+            // create a new person instance
+            Person person;
 
-    // insert into people
-    people[count] = person;
+            person.id = currentPersonIdx + 1;
+            strcpy(person.name, fullName);
+            person.age = age;
+            strcpy(person.adress, adress);
 
-    // encrement the counter by 1
-    count++;
+            people[currentPersonIdx] = person;
 
-    // ask the user if he want to keep adding poeple
-    printf("do you want to keep adding enter K to keep or H to get home app ");
-    scanf("%s", &appState);
+            currentPersonIdx++;
 
-    if ( appState == 'K' ) {
-        createPerson();
+        }
+
+        printf("Do you want to add more people ? (type Y/N) ");
+        scanf("%s", &checkAdding);
+
+        if ( checkAdding == 'Y' ) {
+            printf("How many people do you want to enter? ");
+            scanf("%d", &insertCount);
+        }
+        else {
+            printf("thanks for adding !! \n");
+            appState = 'H';
+            adding = false;
+        }
     }
-    else {
-        homeApp();
-    }
+
+
+
+
 
 }
 
-int updatePerson() {
+int updatePerson( int id ) {
+
     printf("**********************************************************\n");
     printf("********************* UPDATE PERSON **********************\n");
     printf("**********************************************************\n");
 
-    printf("Please enter an id of a person you want to update ");
-    int id;
-    scanf("%d", &id);
-
     char fullName[50], adress[50];
-    int age;
+    int age, found = 0;
 
-    printf("enter full name ");
-    scanf("%s", &fullName);
+    for ( int i = 0; i < 30; i++ ) {
+        // check if the user exists in the list or not
+        if ( people[i].id == id ) {
+            printf("enter full name ");
+            scanf("%s", &fullName);
 
-    printf("enter age ");
-    scanf("%d", &age);
+            printf("enter age ");
+            scanf("%d", &age);
 
-    printf("enter adress ");
-    scanf("%s", &adress);
+            printf("enter adress ");
+            scanf("%s", &adress);
 
-    for ( int i = 0; i < count; i++ ) {
-        if (strlen(people[i].name) > 0) {
-            if ( people[i].id == id ) {
+            strcpy(people[i].name, fullName);
+            people[i].age = age;
+            strcpy(people[i].adress, adress);
 
-                strcpy(people[i].name, fullName);
-                people[i].age = age;
-                strcpy(people[i].adress, adress);
-
-                break;
-
-            }
-            else {
-                printf("person not found");
-                break;
-            }
-        }
-        else {
-            printf("the list of poeple still empty\n");
+            found = 1;
+            printf("Thank you for updating!!");
             break;
         }
     }
 
+    if ( !found ) {
+        printf("the person your looking to update is NOT FOUND!!");
+    }
+
+    appState = 'H';
+    printf("\n");
+
 }
 
-int deletePerson() {
-    printf("**********************************************************\n");
-    printf("********************* DELETE PERSON **********************\n");
-    printf("**********************************************************\n");
-
-    printf("Please enter the id the person you want to delete ");
-    int id;
-    scanf("%id", &id);
-    printf("deleting....\n");
-
+int deletePerson ( int id ) {
+    int found = 0;
     int i, idx = -1;
+    char name[50], confirm;
 
-    for ( i = 0; i < count; i++ ) {
-        if ( strlen(people[i].name) > 0 ) {
-            if ( people[i].id != id ) {
-                idx = i;
-                break;
+    for ( i = 0; i < 30; i++ ) {
+        if ( people[i].id != id ) {
+            found = 1;
+            idx = i;
+            strcpy(people[i].name, name);
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("this person NOT FOUND\n");
+    }
+    else {
+        printf("Are you sure you want to delete <<<<%s>>>> | type (Y/N) ", name);
+        scanf("%s", &confirm);
+        if ( confirm == 'Y' ) {
+            if ( idx != -1 ) {
+                for ( i = 0; i < 30; i++ ) {
+                    people[i] = people[i+1];
+                }
             }
         }
-    }
-
-    if ( idx != -1 ) {
-        for ( i = 0; i < count; i++ ) {
-            people[i] = people[i+1];
+        else {
+            printf("Deleting Canceled");
         }
+
     }
 
-};
+    appState = 'H';
+}
 
 int countPeople () {
-    int counter = 0;
-    for (int i = 0; i < 30; i++) {
+    int count = 0;
+
+    for ( int i = 0; i < 30; i++ ) {
         if ( strlen(people[i].name) > 0 ) {
-            counter++;
+            count++;
         }
     }
 
-    return counter;
+    return count;
 }
+
+
+
+
+
 
 
