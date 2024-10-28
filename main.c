@@ -293,13 +293,16 @@ int deletePerson ( int id ) {
     char name[50], confirm;
 
     for ( i = 0; i < 30; i++ ) {
-        if ( people[i].id != id ) {
+        if ( people[i].id == id ) {
             found = 1;
             idx = i;
-            strcpy(people[i].name, name);
+            strcpy(name, people[i].name);
             break;
         }
     }
+
+    // printf("Are you sure you want to delete <<<<%s>>>> | type (Y/N) \n ", name);
+
 
     if (!found) {
         printf("this person NOT FOUND\n");
@@ -309,7 +312,7 @@ int deletePerson ( int id ) {
         scanf("%s", &confirm);
         if ( confirm == 'Y' ) {
             if ( idx != -1 ) {
-                for ( i = 0; i < 30; i++ ) {
+                for ( i = idx; i < 30; i++ ) {
                     people[i] = people[i+1];
                 }
             }
@@ -319,6 +322,7 @@ int deletePerson ( int id ) {
         }
 
     }
+    //*/
 
     appState = 'H';
 }
